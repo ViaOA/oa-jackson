@@ -37,7 +37,7 @@ import com.viaoa.filter.OAFilter;
 import com.viaoa.filter.OAQueryFilter;
 import com.viaoa.find.OAFinder;
 import com.viaoa.graph.OAGraph;
-import com.viaoa.graph.OAGraphInternal;
+import com.viaoa.graph.api.internal.OAGraphInternal;
 import com.viaoa.graph.service.object.OAObjectCacheService;
 import com.viaoa.graph.service.object.OAObjectInfoService;
 import com.viaoa.graph.service.object.OAObjectPropertyService;
@@ -47,10 +47,10 @@ import com.viaoa.json.OAJson;
 import com.viaoa.json.OAJson.StackItem;
 import com.viaoa.lang.OAArray;
 import com.viaoa.lang.OAString;
+import com.viaoa.lang.oa.VString;
 import com.viaoa.metadata.OAFkeyInfo;
 import com.viaoa.metadata.OALinkInfo;
 import com.viaoa.metadata.OAPropertyInfo;
-import com.viaoa.model.oa.VString;
 import com.viaoa.object.OAObject;
 import com.viaoa.object.OAObjectKey;
 import com.viaoa.path.OAPath;
@@ -1645,7 +1645,7 @@ public class OAJacksonDeserializerLoader {
 			} else if (s.toLowerCase().startsWith(sppToMatch.toLowerCase())) {
 				int x = OAString.dcount(s, ".") - OAString.dcount(sppToMatch, ".");
 				OAPath ppx = new OAPath(stackItem.oi.getForClass(), s);
-				ppx = ppx.getReversePropertyPath();
+				ppx = ppx.getReversePath();
 				if (ppx != null) {
     				OALinkInfo[] lisx = ppx.getLinkInfos();
     

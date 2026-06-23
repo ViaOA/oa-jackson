@@ -182,7 +182,7 @@ public class OAJacksonDeserializerLoader {
 		}
 		OAJson.StackItem stackItem = new OAJson.StackItem();
 		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(clazz);
-		stackItem.oi = og.objectsInternal().callObjectInfoGetOAObjectInfo(clazz);
+		stackItem.oi = og.internal().objects().info().getOAObjectInfo(clazz);
 		stackItem.obj = root;
 		stackItem.node = node;
 
@@ -262,7 +262,7 @@ public class OAJacksonDeserializerLoader {
 
 		oajson.beforeReadCallback(stackItem.node);
 		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(clazz);
-		stackItem.obj = (OAObject) og.objectsInternal().callObjectReflectCreateNewObject(clazz);
+		stackItem.obj = (OAObject) og.internal().objects().reflect().createNewObject(clazz);
 
 		boolean bNeedsAssignedId = loadObjectIdProperties(stackItem);
 
@@ -270,7 +270,7 @@ public class OAJacksonDeserializerLoader {
 		if (srvcOAThreadLocal.isLoading()) {
 			 srvcOAThreadLocal.setLoading(false);
 			try {
-				og.objectsInternal().callObjectInitializeInitializeAfterLoading((OAObject) stackItem.obj, bNeedsAssignedId, false, false);
+				og.internal().objects().initialize().initializeAfterLoading((OAObject) stackItem.obj, bNeedsAssignedId, false, false);
 			} finally {
 				srvcOAThreadLocal.setLoading(true);
 			}
@@ -308,7 +308,7 @@ public class OAJacksonDeserializerLoader {
 				JsonNode jn = stackItem.node.get(propertyName);
 
 				final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(stackItem.oi.getForClass());
-				OAPropertyInfo pi = og.objectsInternal().callObjectInfoGetPropertyInfo(stackItem.oi, propertyName);
+				OAPropertyInfo pi = og.internal().objects().info().getPropertyInfo(stackItem.oi, propertyName);
 				if (pi == null) {
 					continue;
 				}
@@ -680,7 +680,7 @@ public class OAJacksonDeserializerLoader {
 				obj = null;
 			} else {
 				final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(li.getToClass());
-				obj = (OAObject) og.objectsInternal().callObjectCacheGet(li.getToClass(), ok);
+				obj = (OAObject) og.internal().objects().cache().get(li.getToClass(), ok);
 				if (obj == null) {
 					OADataSource ds = OARuntime.datasource().get(li.getToClass());
 					if (ds != null) obj = (OAObject) ds.getObject(li.getToClass(), ok);
@@ -689,7 +689,7 @@ public class OAJacksonDeserializerLoader {
 			
 			if (obj == null && ok != null) {
 				final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(stackItem.obj);
-				og.objectsInternal().callObjectPropertySetProperty(stackItem.obj, li.getName(), ok);
+				og.internal().objects().property().setProperty(stackItem.obj, li.getName(), ok);
 			} else {
 				stackItem.obj.setProperty(li.getName(), obj);
 			}
@@ -792,7 +792,7 @@ public class OAJacksonDeserializerLoader {
 		OAObject obj = null;
 		if (ok != null) {
 			final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(li.getToClass());
-			obj = (OAObject) og.objectsInternal().callObjectCacheGet(li.getToClass(), ok);
+			obj = (OAObject) og.internal().objects().cache().get(li.getToClass(), ok);
 			if (obj == null) {
 				OADataSource ds = OARuntime.datasource().get(li.getToClass());
 				if (ds != null) {
@@ -802,7 +802,7 @@ public class OAJacksonDeserializerLoader {
 		}
 		if (obj == null && ok != null) {
 			final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(stackItem.obj);
-			og.objectsInternal().callObjectPropertySetProperty(stackItem.obj, li.getName(), ok);
+			og.internal().objects().property().setProperty(stackItem.obj, li.getName(), ok);
 		} else {
 			stackItem.obj.setProperty(li.getName(), obj);
 		}
@@ -862,7 +862,7 @@ public class OAJacksonDeserializerLoader {
 		OAQueryFilter filter = new OAQueryFilter(li.getToClass(), sql, values);
 		finder.addFilter(filter);
 		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(li.getToClass());
-		OAObject objNew = (OAObject) og.objectsInternal().callObjectCacheFind(li.getToClass(), finder);
+		OAObject objNew = (OAObject) og.internal().objects().cache().find(li.getToClass(), finder);
 
 		if (objNew == null) {
 			OASelect sel = new OASelect(li.getToClass(), sql, values, "");
@@ -941,7 +941,7 @@ public class OAJacksonDeserializerLoader {
 			OAQueryFilter filter = new OAQueryFilter(li.getToClass(), sql, values);
 			finder.addFilter(filter);
 			final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(li.getToClass());
-			OAObject objNew = (OAObject) og.objectsInternal().callObjectCacheFind(li.getToClass(), finder);
+			OAObject objNew = (OAObject) og.internal().objects().cache().find(li.getToClass(), finder);
 
 			if (objNew == null) {
 				OASelect sel = new OASelect(li.getToClass(), sql, values, "");

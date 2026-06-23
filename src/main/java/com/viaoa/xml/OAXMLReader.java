@@ -495,7 +495,7 @@ public class OAXMLReader {
 		}
 
 		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(toClass);
-		OAObjectInfo oi = og.objectsInternal().callObjectInfoGetOAObjectInfo(toClass);
+		OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(toClass);
 
 		if (objNew == null) {
 			objNew = getObject(toClass, hm);
@@ -507,7 +507,7 @@ public class OAXMLReader {
 			Object[] values = new Object[ids == null ? 0 : ids.length];
 			for (int i = 0; i < ids.length; i++) {
 				String id = ids[i].toUpperCase();
-				Class c2 = og.objectsInternal().callObjectInfoGetPropertyClass(toClass, id);
+				Class c2 = og.internal().objects().info().getPropertyClass(toClass, id);
 				values[i] = hm.get(id);
 				if (values[i] instanceof String) {
 					values[i] = OAConverter.convert(c2, values[i]);
@@ -535,7 +535,7 @@ public class OAXMLReader {
 						continue;
 					}
 					String id = matchProps[i].toUpperCase();
-					Class c2 = og.objectsInternal().callObjectInfoGetPropertyClass(toClass, id);
+					Class c2 = og.internal().objects().info().getPropertyClass(toClass, id);
 
 					Object val = hm.get(id);
 
@@ -574,7 +574,7 @@ public class OAXMLReader {
 			} else {
 				if (ids != null && ids.length > 0) {
 					final OAObjectKey key = new OAObjectKey(values, iguid);
-					objNew = og.objectsInternal().callObjectCacheGet(toClass, key);
+					objNew = og.internal().objects().cache().get(toClass, key);
 				}
 			}
 
@@ -585,7 +585,7 @@ public class OAXMLReader {
 					objNew = createNewObject(toClass);
 //qqqqqqqqqqqqqq 20260111
 					if (objNew.getGuid() == null) {
-						og.objectsInternal().callObjectGuidSetGuid(objNew, iguid);
+						og.internal().objects().guid().setGuid(objNew, iguid);
 					}
 					
 					
@@ -600,7 +600,7 @@ public class OAXMLReader {
 					srvcOAThreadLocal.setLoading(false);
 				}
 //qqqqqqqqqqqqqq 20260111
-				og.objectsInternal().callObjectInitializeInitializeAfterLoading(objNew);
+				og.internal().objects().initialize().initializeAfterLoading(objNew);
 				
 				// 20181115
 //qqqqqq 20260111 was:	OAObjectCacheDelegate.add(objNew);
@@ -820,7 +820,7 @@ public class OAXMLReader {
 							}
 							final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(object.getClass());
 					    	
-							OAObject obj = og.objectsInternal().callObjectCacheGetObject(object.getClass(), og.objectsInternal().callObjectKeyGetKey(object));
+							OAObject obj = og.internal().objects().cache().getObject(object.getClass(), og.internal().objects().key().getKey(object));
 							if (obj != null) {
 								object = obj;
 							}

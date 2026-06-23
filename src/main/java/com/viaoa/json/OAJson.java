@@ -1213,7 +1213,7 @@ public class OAJson {
 						OAObjectKey ok = OAJson.convertNumberToObjectKey(getReadObjectClass(), node.asInt());
 
                 		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(getReadObjectClass());
-						OAObject objNew = (OAObject) og.objectsInternal().callObjectCacheGet(getReadObjectClass(), ok);
+						OAObject objNew = (OAObject) og.internal().objects().cache().get(getReadObjectClass(), ok);
 						if (objNew != null) {
 							hub.add((T) objNew);
 						} else {
@@ -1234,7 +1234,7 @@ public class OAJson {
 							OAObjectKey ok = OAJson.convertJsonSinglePartIdToObjectKey(getReadObjectClass(), s);
 
 	                		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(getReadObjectClass());
-							OAObject objNew = (OAObject) og.objectsInternal().callObjectCacheGet(getReadObjectClass(), ok);
+							OAObject objNew = (OAObject) og.internal().objects().cache().get(getReadObjectClass(), ok);
 							if (objNew != null) {
 								hub.add((T) objNew);
 							} else {
@@ -1269,7 +1269,7 @@ public class OAJson {
 	 */
 	public static OAObjectKey convertJsonSinglePartIdToObjectKey(final Class<? extends OAObject> clazz, final String strSinglePartId) {
 		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(clazz);
-		OAObjectInfo oi = og.objectsInternal().callObjectInfoGetOAObjectInfo(clazz);
+		OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(clazz);
 
 		String[] ids = strSinglePartId.split("/-");
 		Object[] ids2 = new Object[ids.length];
@@ -1294,7 +1294,7 @@ public class OAJson {
 	 */
 	public static OAObjectKey convertNumberToObjectKey(final Class<? extends OAObject> clazz, final int id) {
 		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(clazz);
-		OAObjectInfo oi = og.objectsInternal().callObjectInfoGetOAObjectInfo(clazz);
+		OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(clazz);
 
 		Object[] ids2 = new Object[1];
 		for (OAPropertyInfo pi : oi.getPropertyInfos()) {

@@ -174,7 +174,7 @@ public class OAXMLWriter implements OASerializeWriter {
 		if (bIncludeOnlyImportMatchProperties && obj instanceof OAObject) {
 			OAObject oaObj = (OAObject) obj;
 			final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(oaObj);
-			OAObjectInfo io = og.objectsInternal().callObjectInfoGetOAObjectInfo(oaObj);
+			OAObjectInfo io = og.internal().objects().info().getOAObjectInfo(oaObj);
 			if (!io.hasImportMatchProperties()) {
 				return WRITE_NO;
 			}
@@ -208,13 +208,13 @@ public class OAXMLWriter implements OASerializeWriter {
 		}
 
 		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(oaObj);
-		OAObjectInfo oi = og.objectsInternal().callObjectInfoGetOAObjectInfo(oaObj);
+		OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(oaObj);
 		OALinkInfo li = oi.getOwnedByOne();
 		if (li == null) {
 			return false;
 		}
 
-		Object objx = og.objectsInternal().callObjectPropertyGetProperty(oaObj, li.getName(), false, true);
+		Object objx = og.internal().objects().property().getProperty(oaObj, li.getName(), false, true);
 		if (objx == null) {
 			return false;
 		}
@@ -241,13 +241,13 @@ public class OAXMLWriter implements OASerializeWriter {
 		}
 
 		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(oaObj);
-		OAObjectInfo oi = og.objectsInternal().callObjectInfoGetOAObjectInfo(oaObj);
+		OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(oaObj);
 		OALinkInfo li = oi.getOwnedByOne();
 		if (li == null) {
 			return false;
 		}
 
-		Object objx = og.objectsInternal().callObjectPropertyGetProperty(oaObj, li.getName(), false, true);
+		Object objx = og.internal().objects().property().getProperty(oaObj, li.getName(), false, true);
 		if (objx == null) {
 			return false;
 		}
@@ -471,22 +471,22 @@ public class OAXMLWriter implements OASerializeWriter {
 			
 			@Override
 			public Object callReflectGetProperty(OAObject oaObj, String propPath) {
-				return getOG(oaObj).objectsInternal().callObjectReflectGetProperty(oaObj, propPath);
+				return getOG(oaObj).internal().objects().reflect().getProperty(oaObj, propPath);
 			}
 			
 			@Override
 			public String[] callPropertyGetPropertyNames(OAObject oaObj) {
-				return getOG(oaObj).objectsInternal().callObjectPropertyGetPropertyNames(oaObj);
+				return getOG(oaObj).internal().objects().property().getPropertyNames(oaObj);
 			}
 			
 			@Override
 			public Object callPropertyGetProperty(OAObject oaObj, String name, boolean bReturnNotExist, boolean bConvertWeakRef) {
-				return getOG(oaObj).objectsInternal().callObjectPropertyGetProperty(oaObj, name, bReturnNotExist, bConvertWeakRef);
+				return getOG(oaObj).internal().objects().property().getProperty(oaObj, name, bReturnNotExist, bConvertWeakRef);
 			}
 			
 			@Override
 			public OAObjectInfo callInfoGetOAObjectInfo(OAObject obj) {
-				return getOG(obj).objectsInternal().callObjectInfoGetOAObjectInfo(obj);
+				return getOG(obj).internal().objects().info().getOAObjectInfo(obj);
 			}
 			
 			@Override
@@ -501,7 +501,7 @@ public class OAXMLWriter implements OASerializeWriter {
 			
 			@Override
 			public UUID callGuidGetGuid(OAObject oaObj) {
-				return getOG(oaObj).objectsInternal().callObjectGuidGetGuid(oaObj);
+				return getOG(oaObj).internal().objects().guid().getGuid(oaObj);
 			}
 		};
         return srvcObjectXML;

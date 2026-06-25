@@ -36,7 +36,6 @@ import com.viaoa.converter.OAConv;
 import com.viaoa.converter.OAConverter;
 import com.viaoa.filter.OAFilter;
 import com.viaoa.graph.OAGraph;
-import com.viaoa.graph.api.internal.OAGraphInternal;
 import com.viaoa.graph.service.object.OAObjectCacheService;
 import com.viaoa.graph.service.object.OAObjectInfoService;
 import com.viaoa.graph.service.object.OAObjectKeyService;
@@ -494,7 +493,7 @@ public class OAXMLReader {
 			}
 		}
 
-		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(toClass);
+		final OAGraph og =  OARuntime.graph(toClass);
 		OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(toClass);
 
 		if (objNew == null) {
@@ -818,7 +817,7 @@ public class OAXMLReader {
 							if (object == null) {
 								return object;
 							}
-							final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(object.getClass());
+							final OAGraph og =  OARuntime.graph(object.getClass());
 					    	
 							OAObject obj = og.internal().objects().cache().getObject(object.getClass(), og.internal().objects().key().getKey(object));
 							if (obj != null) {

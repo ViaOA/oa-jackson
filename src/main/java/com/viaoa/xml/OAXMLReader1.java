@@ -37,11 +37,7 @@ import com.viaoa.compare.OACompare;
 import com.viaoa.converter.OAConverter;
 import com.viaoa.datasource.OADataSource;
 import com.viaoa.filter.OAFilter;
-import com.viaoa.graph.api.internal.OAGraphInternal;
-import com.viaoa.graph.service.object.OAObjectCSService;
-import com.viaoa.graph.service.object.OAObjectCacheService;
-import com.viaoa.graph.service.object.OAObjectInfoService;
-import com.viaoa.graph.service.object.OAObjectKeyService;
+import com.viaoa.graph.OAGraph;
 import com.viaoa.hub.Hub;
 import com.viaoa.lang.OAString;
 import com.viaoa.metadata.OALinkInfo;
@@ -532,7 +528,7 @@ public class OAXMLReader1 extends DefaultHandler {
 							Class cx = (Class) ((Hashtable) stack[i]).get(XML_CLASS);
 							// find className of property
 							String prop = (String) stack[i + 1];
-							final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(cx);
+							final OAGraph og =  OARuntime.graph(cx);
 							OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(cx);
 							cx = og.internal().objects().info().getPropertyClass(oi, prop);
 
@@ -571,7 +567,7 @@ public class OAXMLReader1 extends DefaultHandler {
 							Class cx = (Class) ((Hashtable) stack[i]).get(XML_CLASS);
 							// find className of property
 							String prop = (String) stack[i + 1];
-							final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(cx);
+							final OAGraph og =  OARuntime.graph(cx);
 							OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(cx);
 							cx = og.internal().objects().info().getPropertyClass(oi, prop);
 
@@ -699,7 +695,7 @@ public class OAXMLReader1 extends DefaultHandler {
 			final String guid = (String) hash.remove(XML_GUID);
 
 			final Class c = (Class) hash.get(XML_CLASS);
-			final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(c);
+			final OAGraph og =  OARuntime.graph(c);
 			OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(c);
 			String[] ids = oi.getIdProperties();
 			Object[] values = new Object[ids == null ? 0 : ids.length];
@@ -773,7 +769,7 @@ public class OAXMLReader1 extends DefaultHandler {
 				}
 			} else {
 				if (ids != null && ids.length > 0) {
-					// final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(c);
+					// final OAGraph og =  OARuntime.graph(c);
 					object = (OAObject) og.internal().objects().cache().get(c, key);
 				}
 			}
@@ -1029,7 +1025,7 @@ public class OAXMLReader1 extends DefaultHandler {
 				bLoadingObject = true;
 				final OAThreadLocalService srvcOAThreadLocal = ((OAThreadService) OARuntime.thread()).getThreadLocalService();  
 
-				final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(object);
+				final OAGraph og =  OARuntime.graph(object);
 				if (og.internal().objects().cs().isServer(object)) {
 					bWas = srvcOAThreadLocal.getSendSyncMessages();
 					srvcOAThreadLocal.setSendSyncMessages(false);
@@ -1039,7 +1035,7 @@ public class OAXMLReader1 extends DefaultHandler {
 				}
 			}
 			final Class c = (Class) hash.remove(XML_CLASS);
-			final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(c);
+			final OAGraph og =  OARuntime.graph(c);
 			OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(c);
 			
 			Enumeration enumx = hash.keys();
@@ -1162,7 +1158,7 @@ public class OAXMLReader1 extends DefaultHandler {
 				} else if (v instanceof OAObjectKey) {
 					// try to find "real" object
 					Class cx = og.internal().objects().info().getPropertyClass(c, (String) k);
-					final OAGraphInternal og2 = (OAGraphInternal) OARuntime.graph(cx);
+					final OAGraph og2 = OARuntime.graph(cx);
 					v = og2.internal().objects().cache().get(cx, (OAObjectKey) v);
 					if (v == null) {
 						bResult = false;
@@ -1188,7 +1184,7 @@ public class OAXMLReader1 extends DefaultHandler {
 				}
 				final OAThreadLocalService srvcOAThreadLocal = ((OAThreadService) OARuntime.thread()).getThreadLocalService();  
 				srvcOAThreadLocal.setLoading(false);
-				final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(object);
+				final OAGraph og =  OARuntime.graph(object);
 				if (og.internal().objects().cs().isServer(object)) {
 					srvcOAThreadLocal.setSendSyncMessages(bWas);
 				}
@@ -1317,7 +1313,7 @@ public class OAXMLReader1 extends DefaultHandler {
 	 * @return the resolved object instance
 	 */
 	protected Object getRealObject(OAObject object) {
-		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(object.getClass());
+		final OAGraph og =  OARuntime.graph(object.getClass());
 		Object obj = og.internal().objects().cache().getObject(object.getClass(), og.internal().objects().key().getKey(object));
 		if (obj != null) {
 			return obj;

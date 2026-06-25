@@ -27,7 +27,7 @@ import com.viaoa.converter.OAConverter;
 import com.viaoa.datetime.OADate;
 import com.viaoa.datetime.OADateTime;
 import com.viaoa.datetime.OATime;
-import com.viaoa.graph.api.internal.OAGraphInternal;
+import com.viaoa.graph.OAGraph;
 import com.viaoa.graph.service.object.OAObjectInfoService;
 import com.viaoa.graph.service.object.OAObjectPropertyService;
 import com.viaoa.graph.service.object.OAObjectReflectService;
@@ -77,7 +77,7 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 		
 		final OAObject oaObj = (OAObject) value;
 
-		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(oaObj);
+		final OAGraph og =  OARuntime.graph(oaObj);
 		final OAObjectInfo oi = og.internal().objects().info().getObjectInfo(oaObj.getClass());
 
 		gen.writeStartObject();
@@ -248,7 +248,7 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 
 			if (!bSerialized) {
 				OAObjectKey key = null;
-				final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(oaObj);
+				final OAGraph og =  OARuntime.graph(oaObj);
 				Object obj = og.internal().objects().property().getProperty(oaObj, li.getName(), false, true);
 
 				obj = oaj.getPropertyValueCallback(oaObj, li.getLowerName(), obj);
@@ -338,7 +338,7 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 				}
 			} else {
 				// if hub is loaded and it is empty, then send empty array (for convenience only)
-				final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(oaObj);
+				final OAGraph og =  OARuntime.graph(oaObj);
 				Object obj = og.internal().objects().property().getProperty(oaObj, li.getName(), false, true);
 				if (obj instanceof Hub) {
 					if (((Hub) obj).isEmpty()) {
@@ -538,7 +538,7 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 
 		if (bCheckValue) {
 			value = pi.getValue(oaObj);
-			final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(oaObj);
+			final OAGraph og =  OARuntime.graph(oaObj);
 			if (pi.getIsPrimitive() && pi.getTrackPrimitiveNull() && og.internal().objects().reflect().getPrimitiveNull(oaObj, lowerName)) {
 				value = null;
 			}

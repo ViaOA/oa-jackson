@@ -24,7 +24,7 @@ import java.util.UUID;
 
 import com.viaoa.cascade.OACascade;
 import com.viaoa.datetime.OADateTime;
-import com.viaoa.graph.api.internal.OAGraphInternal;
+import com.viaoa.graph.OAGraph;
 import com.viaoa.hub.Hub;
 import com.viaoa.lang.OAString;
 import com.viaoa.metadata.OALinkInfo;
@@ -153,7 +153,7 @@ public class OAXMLWriter implements OASerializeWriter {
 		if (cascade == null) {
 			cascade = new OACascade();
 		}
-		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(hub);
+		final OAGraph og =  OARuntime.graph(hub);
 		getHubXMLService().write(hub, this, null, false, cascade);
 	}
 
@@ -173,7 +173,7 @@ public class OAXMLWriter implements OASerializeWriter {
 	public int shouldWriteProperty(Object obj, String propertyName, Object value) {
 		if (bIncludeOnlyImportMatchProperties && obj instanceof OAObject) {
 			OAObject oaObj = (OAObject) obj;
-			final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(oaObj);
+			final OAGraph og =  OARuntime.graph(oaObj);
 			OAObjectInfo io = og.internal().objects().info().getOAObjectInfo(oaObj);
 			if (!io.hasImportMatchProperties()) {
 				return WRITE_NO;
@@ -207,7 +207,7 @@ public class OAXMLWriter implements OASerializeWriter {
 			return true;
 		}
 
-		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(oaObj);
+		final OAGraph og =  OARuntime.graph(oaObj);
 		OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(oaObj);
 		OALinkInfo li = oi.getOwnedByOne();
 		if (li == null) {
@@ -240,7 +240,7 @@ public class OAXMLWriter implements OASerializeWriter {
 			return false;
 		}
 
-		final OAGraphInternal og = (OAGraphInternal) OARuntime.graph(oaObj);
+		final OAGraph og =  OARuntime.graph(oaObj);
 		OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(oaObj);
 		OALinkInfo li = oi.getOwnedByOne();
 		if (li == null) {
@@ -455,17 +455,17 @@ public class OAXMLWriter implements OASerializeWriter {
 	public OAObjectXMLService getOAObjectXMLService() {
 		if (srvcObjectXML != null) return srvcObjectXML;
 		srvcObjectXML = new OAObjectXMLService() {
-			OAGraphInternal og;
-			public OAGraphInternal getOG(Class<? extends OAObject> c) {
-				if (og == null) og = (OAGraphInternal) OARuntime.graph(c);
+			OAGraph og;
+			public OAGraph getOG(Class<? extends OAObject> c) {
+				if (og == null) og = OARuntime.graph(c);
 				return og;
 			}
-			public OAGraphInternal getOG(OAObject obj) {
-				if (og == null) og = (OAGraphInternal) OARuntime.graph(obj.getClass());
+			public OAGraph getOG(OAObject obj) {
+				if (og == null) og = OARuntime.graph(obj.getClass());
 				return og;
 			}
-			public OAGraphInternal getOG(Hub<?> hub) {
-				if (og == null) og = (OAGraphInternal) OARuntime.graph(hub.getObjectClass());
+			public OAGraph getOG(Hub<?> hub) {
+				if (og == null) og = OARuntime.graph(hub.getObjectClass());
 				return og;
 			}
 			
@@ -511,9 +511,9 @@ public class OAXMLWriter implements OASerializeWriter {
 	public HubXMLService getHubXMLService() {
 		if (srvcHubXML != null) return srvcHubXML;
 		srvcHubXML = new HubXMLService() {
-			OAGraphInternal og;
-			public OAGraphInternal getOG(OAObject obj) {
-				if (og == null) og = (OAGraphInternal) OARuntime.graph(obj.getClass());
+			OAGraph og;
+			public OAGraph getOG(OAObject obj) {
+				if (og == null) og = OARuntime.graph(obj.getClass());
 				return og;
 			}
 			@Override

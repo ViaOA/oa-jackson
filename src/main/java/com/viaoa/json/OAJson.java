@@ -44,14 +44,14 @@ import com.viaoa.cascade.OACascade;
 import com.viaoa.converter.OAConv;
 import com.viaoa.datasource.OADataSource;
 import com.viaoa.datetime.OADate;
-import com.viaoa.graph.OAGraph;
-import com.viaoa.graph.service.object.OAObjectImportMatchService.ImportMatch;
 import com.viaoa.hub.Hub;
 import com.viaoa.json.jackson.OAJacksonModule;
 import com.viaoa.lang.OAString;
 import com.viaoa.metadata.OALinkInfo;
 import com.viaoa.metadata.OAObjectInfo;
 import com.viaoa.metadata.OAPropertyInfo;
+import com.viaoa.oa.OA;
+import com.viaoa.oa.service.object.OAObjectImportMatchService.ImportMatch;
 import com.viaoa.object.OAObject;
 import com.viaoa.object.OAObjectKey;
 import com.viaoa.runtime.OARuntime;
@@ -1209,8 +1209,8 @@ public class OAJson {
 						// key
 						OAObjectKey ok = OAJson.convertNumberToObjectKey(getReadObjectClass(), node.asInt());
 
-                		final OAGraph og =  OARuntime.graph(getReadObjectClass());
-						OAObject objNew = (OAObject) og.internal().objects().cache().get(getReadObjectClass(), ok);
+                		final OA oa =  OARuntime.oa(getReadObjectClass());
+						OAObject objNew = (OAObject) oa.internal().objects().cache().get(getReadObjectClass(), ok);
 						if (objNew != null) {
 							hub.add((T) objNew);
 						} else {
@@ -1230,8 +1230,8 @@ public class OAJson {
 							// convert multipart key to OAObjectKey
 							OAObjectKey ok = OAJson.convertJsonSinglePartIdToObjectKey(getReadObjectClass(), s);
 
-	                		final OAGraph og =  OARuntime.graph(getReadObjectClass());
-							OAObject objNew = (OAObject) og.internal().objects().cache().get(getReadObjectClass(), ok);
+	                		final OA oa =  OARuntime.oa(getReadObjectClass());
+							OAObject objNew = (OAObject) oa.internal().objects().cache().get(getReadObjectClass(), ok);
 							if (objNew != null) {
 								hub.add((T) objNew);
 							} else {
@@ -1265,8 +1265,8 @@ public class OAJson {
 	 * @return constructed OAObjectKey
 	 */
 	public static OAObjectKey convertJsonSinglePartIdToObjectKey(final Class<? extends OAObject> clazz, final String strSinglePartId) {
-		final OAGraph og =  OARuntime.graph(clazz);
-		OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(clazz);
+		final OA oa =  OARuntime.oa(clazz);
+		OAObjectInfo oi = oa.internal().objects().info().getOAObjectInfo(clazz);
 
 		String[] ids = strSinglePartId.split("/-");
 		Object[] ids2 = new Object[ids.length];
@@ -1290,8 +1290,8 @@ public class OAJson {
 	 * @return OAObjectKey containing the converted ID
 	 */
 	public static OAObjectKey convertNumberToObjectKey(final Class<? extends OAObject> clazz, final int id) {
-		final OAGraph og =  OARuntime.graph(clazz);
-		OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(clazz);
+		final OA oa =  OARuntime.oa(clazz);
+		OAObjectInfo oi = oa.internal().objects().info().getOAObjectInfo(clazz);
 
 		Object[] ids2 = new Object[1];
 		for (OAPropertyInfo pi : oi.getPropertyInfos()) {

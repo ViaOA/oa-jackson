@@ -37,11 +37,11 @@ import com.viaoa.compare.OACompare;
 import com.viaoa.converter.OAConverter;
 import com.viaoa.datasource.OADataSource;
 import com.viaoa.filter.OAFilter;
-import com.viaoa.graph.OAGraph;
 import com.viaoa.hub.Hub;
 import com.viaoa.lang.OAString;
 import com.viaoa.metadata.OALinkInfo;
 import com.viaoa.metadata.OAObjectInfo;
+import com.viaoa.oa.OA;
 import com.viaoa.object.OAObject;
 import com.viaoa.object.OAObjectKey;
 import com.viaoa.runtime.OARuntime;
@@ -528,12 +528,12 @@ public class OAXMLReader1 extends DefaultHandler {
 							Class cx = (Class) ((Hashtable) stack[i]).get(XML_CLASS);
 							// find className of property
 							String prop = (String) stack[i + 1];
-							final OAGraph og =  OARuntime.graph(cx);
-							OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(cx);
-							cx = og.internal().objects().info().getPropertyClass(oi, prop);
+							final OA oa =  OARuntime.oa(cx);
+							OAObjectInfo oi = oa.internal().objects().info().getOAObjectInfo(cx);
+							cx = oa.internal().objects().info().getPropertyClass(oi, prop);
 
 							if (Hub.class.equals(cx)) {
-								OALinkInfo li = og.internal().objects().info().getLinkInfo(oi, prop);
+								OALinkInfo li = oa.internal().objects().info().getLinkInfo(oi, prop);
 								if (li != null) {
 									cx = li.getToClass();
 								}
@@ -567,12 +567,12 @@ public class OAXMLReader1 extends DefaultHandler {
 							Class cx = (Class) ((Hashtable) stack[i]).get(XML_CLASS);
 							// find className of property
 							String prop = (String) stack[i + 1];
-							final OAGraph og =  OARuntime.graph(cx);
-							OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(cx);
-							cx = og.internal().objects().info().getPropertyClass(oi, prop);
+							final OA oa =  OARuntime.oa(cx);
+							OAObjectInfo oi = oa.internal().objects().info().getOAObjectInfo(cx);
+							cx = oa.internal().objects().info().getPropertyClass(oi, prop);
 
 							if (Hub.class.equals(cx)) {
-								OALinkInfo li = og.internal().objects().info().getLinkInfo(oi, prop);
+								OALinkInfo li = oa.internal().objects().info().getLinkInfo(oi, prop);
 								if (li != null) {
 									cx = li.getToClass();
 								}
@@ -695,14 +695,14 @@ public class OAXMLReader1 extends DefaultHandler {
 			final String guid = (String) hash.remove(XML_GUID);
 
 			final Class c = (Class) hash.get(XML_CLASS);
-			final OAGraph og =  OARuntime.graph(c);
-			OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(c);
+			final OA oa =  OARuntime.oa(c);
+			OAObjectInfo oi = oa.internal().objects().info().getOAObjectInfo(c);
 			String[] ids = oi.getIdProperties();
 			Object[] values = new Object[ids == null ? 0 : ids.length];
 
 			for (int i = 0; i < ids.length; i++) {
 				String id = ids[i].toUpperCase();
-				Class c2 = og.internal().objects().info().getPropertyClass(c, id);
+				Class c2 = oa.internal().objects().info().getPropertyClass(c, id);
 				values[i] = hash.get(id);
 				if (values[i] instanceof String) {
 					values[i] = OAConverter.convert(c2, values[i]);
@@ -719,7 +719,7 @@ public class OAXMLReader1 extends DefaultHandler {
 						continue;
 					}
 					String id = matchProps[i].toUpperCase();
-					Class c2 = og.internal().objects().info().getPropertyClass(c, id);
+					Class c2 = oa.internal().objects().info().getPropertyClass(c, id);
 					Object val = hash.get(id);
 					if (val instanceof String) {
 						val = OAConverter.convert(c2, val);
@@ -770,7 +770,7 @@ public class OAXMLReader1 extends DefaultHandler {
 			} else {
 				if (ids != null && ids.length > 0) {
 					// final OAGraph og =  OARuntime.graph(c);
-					object = (OAObject) og.internal().objects().cache().get(c, key);
+					object = (OAObject) oa.internal().objects().cache().get(c, key);
 				}
 			}
 			if (object == null && guid != null) {
@@ -1025,8 +1025,8 @@ public class OAXMLReader1 extends DefaultHandler {
 				bLoadingObject = true;
 				final OAThreadLocalService srvcOAThreadLocal = ((OAThreadService) OARuntime.thread()).getThreadLocalService();  
 
-				final OAGraph og =  OARuntime.graph(object);
-				if (og.internal().objects().cs().isServer(object)) {
+				final OA oa =  OARuntime.oa(object);
+				if (oa.internal().objects().cs().isServer(object)) {
 					bWas = srvcOAThreadLocal.getSendSyncMessages();
 					srvcOAThreadLocal.setSendSyncMessages(false);
 					// no, needs to have OAObjectEventDelegate.firePropertyChange() process property changes
@@ -1035,8 +1035,8 @@ public class OAXMLReader1 extends DefaultHandler {
 				}
 			}
 			final Class c = (Class) hash.remove(XML_CLASS);
-			final OAGraph og =  OARuntime.graph(c);
-			OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(c);
+			final OA oa =  OARuntime.oa(c);
+			OAObjectInfo oi = oa.internal().objects().info().getOAObjectInfo(c);
 			
 			Enumeration enumx = hash.keys();
 
@@ -1143,7 +1143,7 @@ public class OAXMLReader1 extends DefaultHandler {
 							}
 						}
 					}
-				} else if (og.internal().objects().info().isHubProperty(oi, (String) k)) {
+				} else if (oa.internal().objects().info().isHubProperty(oi, (String) k)) {
 					// empty hub, otherwise "v" would have been a Vector
 				} else if (v != null && (v instanceof String) && ((String) v).startsWith(XML_GUID)) {
 					String guid = ((String) v).substring(XML_GUID.length());
@@ -1157,9 +1157,9 @@ public class OAXMLReader1 extends DefaultHandler {
 					}
 				} else if (v instanceof OAObjectKey) {
 					// try to find "real" object
-					Class cx = og.internal().objects().info().getPropertyClass(c, (String) k);
-					final OAGraph og2 = OARuntime.graph(cx);
-					v = og2.internal().objects().cache().get(cx, (OAObjectKey) v);
+					Class cx = oa.internal().objects().info().getPropertyClass(c, (String) k);
+					final OA oa2 = OARuntime.oa(cx);
+					v = oa2.internal().objects().cache().get(cx, (OAObjectKey) v);
 					if (v == null) {
 						bResult = false;
 					} else {
@@ -1168,7 +1168,7 @@ public class OAXMLReader1 extends DefaultHandler {
 					}
 				} else {
 					if (v instanceof String) {
-						Class cx = og.internal().objects().info().getPropertyClass(c, (String) k);
+						Class cx = oa.internal().objects().info().getPropertyClass(c, (String) k);
 						if (cx != null && !cx.equals(String.class)) {
 							v = convertToObject((String) k, (String) v, cx);
 						}
@@ -1184,8 +1184,8 @@ public class OAXMLReader1 extends DefaultHandler {
 				}
 				final OAThreadLocalService srvcOAThreadLocal = ((OAThreadService) OARuntime.thread()).getThreadLocalService();  
 				srvcOAThreadLocal.setLoading(false);
-				final OAGraph og =  OARuntime.graph(object);
-				if (og.internal().objects().cs().isServer(object)) {
+				final OA oa =  OARuntime.oa(object);
+				if (oa.internal().objects().cs().isServer(object)) {
 					srvcOAThreadLocal.setSendSyncMessages(bWas);
 				}
 			}
@@ -1313,8 +1313,8 @@ public class OAXMLReader1 extends DefaultHandler {
 	 * @return the resolved object instance
 	 */
 	protected Object getRealObject(OAObject object) {
-		final OAGraph og =  OARuntime.graph(object.getClass());
-		Object obj = og.internal().objects().cache().getObject(object.getClass(), og.internal().objects().key().getKey(object));
+		final OA oa =  OARuntime.oa(object.getClass());
+		Object obj = oa.internal().objects().cache().getObject(object.getClass(), oa.internal().objects().key().getKey(object));
 		if (obj != null) {
 			return obj;
 		}

@@ -24,12 +24,12 @@ import java.util.UUID;
 
 import com.viaoa.cascade.OACascade;
 import com.viaoa.datetime.OADateTime;
-import com.viaoa.graph.OAGraph;
 import com.viaoa.hub.Hub;
 import com.viaoa.lang.OAString;
 import com.viaoa.metadata.OALinkInfo;
 import com.viaoa.metadata.OAObjectInfo;
 import com.viaoa.metadata.OAPropertyInfo;
+import com.viaoa.oa.OA;
 import com.viaoa.object.OAObject;
 import com.viaoa.object.OAObjectKey;
 import com.viaoa.runtime.OARuntime;
@@ -153,7 +153,7 @@ public class OAXMLWriter implements OASerializeWriter {
 		if (cascade == null) {
 			cascade = new OACascade();
 		}
-		final OAGraph og =  OARuntime.graph(hub);
+		final OA oa =  OARuntime.oa(hub);
 		getHubXMLService().write(hub, this, null, false, cascade);
 	}
 
@@ -173,8 +173,8 @@ public class OAXMLWriter implements OASerializeWriter {
 	public int shouldWriteProperty(Object obj, String propertyName, Object value) {
 		if (bIncludeOnlyImportMatchProperties && obj instanceof OAObject) {
 			OAObject oaObj = (OAObject) obj;
-			final OAGraph og =  OARuntime.graph(oaObj);
-			OAObjectInfo io = og.internal().objects().info().getOAObjectInfo(oaObj);
+			final OA oa =  OARuntime.oa(oaObj);
+			OAObjectInfo io = oa.internal().objects().info().getOAObjectInfo(oaObj);
 			if (!io.hasImportMatchProperties()) {
 				return WRITE_NO;
 			}
@@ -207,14 +207,14 @@ public class OAXMLWriter implements OASerializeWriter {
 			return true;
 		}
 
-		final OAGraph og =  OARuntime.graph(oaObj);
-		OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(oaObj);
+		final OA oa =  OARuntime.oa(oaObj);
+		OAObjectInfo oi = oa.internal().objects().info().getOAObjectInfo(oaObj);
 		OALinkInfo li = oi.getOwnedByOne();
 		if (li == null) {
 			return false;
 		}
 
-		Object objx = og.internal().objects().property().getProperty(oaObj, li.getName(), false, true);
+		Object objx = oa.internal().objects().property().getProperty(oaObj, li.getName(), false, true);
 		if (objx == null) {
 			return false;
 		}
@@ -240,14 +240,14 @@ public class OAXMLWriter implements OASerializeWriter {
 			return false;
 		}
 
-		final OAGraph og =  OARuntime.graph(oaObj);
-		OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(oaObj);
+		final OA oa =  OARuntime.oa(oaObj);
+		OAObjectInfo oi = oa.internal().objects().info().getOAObjectInfo(oaObj);
 		OALinkInfo li = oi.getOwnedByOne();
 		if (li == null) {
 			return false;
 		}
 
-		Object objx = og.internal().objects().property().getProperty(oaObj, li.getName(), false, true);
+		Object objx = oa.internal().objects().property().getProperty(oaObj, li.getName(), false, true);
 		if (objx == null) {
 			return false;
 		}
@@ -455,18 +455,18 @@ public class OAXMLWriter implements OASerializeWriter {
 	public OAObjectXMLService getOAObjectXMLService() {
 		if (srvcObjectXML != null) return srvcObjectXML;
 		srvcObjectXML = new OAObjectXMLService() {
-			OAGraph og;
-			public OAGraph getOG(Class<? extends OAObject> c) {
-				if (og == null) og = OARuntime.graph(c);
-				return og;
+			OA oa;
+			public OA getOG(Class<? extends OAObject> c) {
+				if (oa == null) oa = OARuntime.oa(c);
+				return oa;
 			}
-			public OAGraph getOG(OAObject obj) {
-				if (og == null) og = OARuntime.graph(obj.getClass());
-				return og;
+			public OA getOG(OAObject obj) {
+				if (oa == null) oa = OARuntime.oa(obj.getClass());
+				return oa;
 			}
-			public OAGraph getOG(Hub<?> hub) {
-				if (og == null) og = OARuntime.graph(hub.getObjectClass());
-				return og;
+			public OA getOG(Hub<?> hub) {
+				if (oa == null) oa = OARuntime.oa(hub.getObjectClass());
+				return oa;
 			}
 			
 			@Override
@@ -511,10 +511,10 @@ public class OAXMLWriter implements OASerializeWriter {
 	public HubXMLService getHubXMLService() {
 		if (srvcHubXML != null) return srvcHubXML;
 		srvcHubXML = new HubXMLService() {
-			OAGraph og;
-			public OAGraph getOG(OAObject obj) {
-				if (og == null) og = OARuntime.graph(obj.getClass());
-				return og;
+			OA oa;
+			public OA getOG(OAObject obj) {
+				if (oa == null) oa = OARuntime.oa(obj.getClass());
+				return oa;
 			}
 			@Override
 			public void callObjectXMLWrite(OAObject oaObj, OAXMLWriter ow, String tagName, boolean bKeyOnly, OACascade cascade) {

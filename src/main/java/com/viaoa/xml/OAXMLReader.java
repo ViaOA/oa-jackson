@@ -35,15 +35,15 @@ import com.viaoa.compare.OACompare;
 import com.viaoa.converter.OAConv;
 import com.viaoa.converter.OAConverter;
 import com.viaoa.filter.OAFilter;
-import com.viaoa.graph.OAGraph;
-import com.viaoa.graph.service.object.OAObjectCacheService;
-import com.viaoa.graph.service.object.OAObjectInfoService;
-import com.viaoa.graph.service.object.OAObjectKeyService;
 import com.viaoa.hub.Hub;
 import com.viaoa.lang.OAString;
 import com.viaoa.metadata.OALinkInfo;
 import com.viaoa.metadata.OAObjectInfo;
 import com.viaoa.metadata.OAPropertyInfo;
+import com.viaoa.oa.OA;
+import com.viaoa.oa.service.object.OAObjectCacheService;
+import com.viaoa.oa.service.object.OAObjectInfoService;
+import com.viaoa.oa.service.object.OAObjectKeyService;
 import com.viaoa.object.OAObject;
 import com.viaoa.object.OAObjectKey;
 import com.viaoa.runtime.OARuntime;
@@ -493,8 +493,8 @@ public class OAXMLReader {
 			}
 		}
 
-		final OAGraph og =  OARuntime.graph(toClass);
-		OAObjectInfo oi = og.internal().objects().info().getOAObjectInfo(toClass);
+		final OA oa =  OARuntime.oa(toClass);
+		OAObjectInfo oi = oa.internal().objects().info().getOAObjectInfo(toClass);
 
 		if (objNew == null) {
 			objNew = getObject(toClass, hm);
@@ -506,7 +506,7 @@ public class OAXMLReader {
 			Object[] values = new Object[ids == null ? 0 : ids.length];
 			for (int i = 0; i < ids.length; i++) {
 				String id = ids[i].toUpperCase();
-				Class c2 = og.internal().objects().info().getPropertyClass(toClass, id);
+				Class c2 = oa.internal().objects().info().getPropertyClass(toClass, id);
 				values[i] = hm.get(id);
 				if (values[i] instanceof String) {
 					values[i] = OAConverter.convert(c2, values[i]);
@@ -534,7 +534,7 @@ public class OAXMLReader {
 						continue;
 					}
 					String id = matchProps[i].toUpperCase();
-					Class c2 = og.internal().objects().info().getPropertyClass(toClass, id);
+					Class c2 = oa.internal().objects().info().getPropertyClass(toClass, id);
 
 					Object val = hm.get(id);
 
@@ -573,7 +573,7 @@ public class OAXMLReader {
 			} else {
 				if (ids != null && ids.length > 0) {
 					final OAObjectKey key = new OAObjectKey(values, iguid);
-					objNew = og.internal().objects().cache().get(toClass, key);
+					objNew = oa.internal().objects().cache().get(toClass, key);
 				}
 			}
 
@@ -584,7 +584,7 @@ public class OAXMLReader {
 					objNew = createNewObject(toClass);
 //qqqqqqqqqqqqqq 20260111
 					if (objNew.getGuid() == null) {
-						og.internal().objects().guid().setGuid(objNew, iguid);
+						oa.internal().objects().guid().setGuid(objNew, iguid);
 					}
 					
 					
@@ -599,7 +599,7 @@ public class OAXMLReader {
 					srvcOAThreadLocal.setLoading(false);
 				}
 //qqqqqqqqqqqqqq 20260111
-				og.internal().objects().initialize().initializeAfterLoading(objNew);
+				oa.internal().objects().initialize().initializeAfterLoading(objNew);
 				
 				// 20181115
 //qqqqqq 20260111 was:	OAObjectCacheDelegate.add(objNew);
@@ -817,9 +817,9 @@ public class OAXMLReader {
 							if (object == null) {
 								return object;
 							}
-							final OAGraph og =  OARuntime.graph(object.getClass());
+							final OA oa =  OARuntime.oa(object.getClass());
 					    	
-							OAObject obj = og.internal().objects().cache().getObject(object.getClass(), og.internal().objects().key().getKey(object));
+							OAObject obj = oa.internal().objects().cache().getObject(object.getClass(), oa.internal().objects().key().getKey(object));
 							if (obj != null) {
 								object = obj;
 							}

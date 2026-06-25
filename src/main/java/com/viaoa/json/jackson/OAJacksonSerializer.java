@@ -27,10 +27,6 @@ import com.viaoa.converter.OAConverter;
 import com.viaoa.datetime.OADate;
 import com.viaoa.datetime.OADateTime;
 import com.viaoa.datetime.OATime;
-import com.viaoa.graph.OAGraph;
-import com.viaoa.graph.service.object.OAObjectInfoService;
-import com.viaoa.graph.service.object.OAObjectPropertyService;
-import com.viaoa.graph.service.object.OAObjectReflectService;
 import com.viaoa.hub.Hub;
 import com.viaoa.json.OAJson;
 import com.viaoa.json.OAJson.StackItem;
@@ -42,6 +38,10 @@ import com.viaoa.object.OAObject;
 import com.viaoa.object.OAObjectKey;
 import com.viaoa.path.OAPath;
 import com.viaoa.metadata.pojo.*;
+import com.viaoa.oa.OA;
+import com.viaoa.oa.service.object.OAObjectInfoService;
+import com.viaoa.oa.service.object.OAObjectPropertyService;
+import com.viaoa.oa.service.object.OAObjectReflectService;
 import com.viaoa.runtime.OARuntime;
 import com.viaoa.runtime.OAThreadLocalService;
 import com.viaoa.runtime.OAThreadService;
@@ -77,8 +77,8 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 		
 		final OAObject oaObj = (OAObject) value;
 
-		final OAGraph og =  OARuntime.graph(oaObj);
-		final OAObjectInfo oi = og.internal().objects().info().getObjectInfo(oaObj.getClass());
+		final OA oa =  OARuntime.oa(oaObj);
+		final OAObjectInfo oi = oa.internal().objects().info().getObjectInfo(oaObj.getClass());
 
 		gen.writeStartObject();
 
@@ -248,8 +248,8 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 
 			if (!bSerialized) {
 				OAObjectKey key = null;
-				final OAGraph og =  OARuntime.graph(oaObj);
-				Object obj = og.internal().objects().property().getProperty(oaObj, li.getName(), false, true);
+				final OA oa =  OARuntime.oa(oaObj);
+				Object obj = oa.internal().objects().property().getProperty(oaObj, li.getName(), false, true);
 
 				obj = oaj.getPropertyValueCallback(oaObj, li.getLowerName(), obj);
 
@@ -338,8 +338,8 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 				}
 			} else {
 				// if hub is loaded and it is empty, then send empty array (for convenience only)
-				final OAGraph og =  OARuntime.graph(oaObj);
-				Object obj = og.internal().objects().property().getProperty(oaObj, li.getName(), false, true);
+				final OA oa =  OARuntime.oa(oaObj);
+				Object obj = oa.internal().objects().property().getProperty(oaObj, li.getName(), false, true);
 				if (obj instanceof Hub) {
 					if (((Hub) obj).isEmpty()) {
 						gen.writeArrayFieldStart(li.getLowerName());
@@ -538,8 +538,8 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 
 		if (bCheckValue) {
 			value = pi.getValue(oaObj);
-			final OAGraph og =  OARuntime.graph(oaObj);
-			if (pi.getIsPrimitive() && pi.getTrackPrimitiveNull() && og.internal().objects().reflect().getPrimitiveNull(oaObj, lowerName)) {
+			final OA oa =  OARuntime.oa(oaObj);
+			if (pi.getIsPrimitive() && pi.getTrackPrimitiveNull() && oa.internal().objects().reflect().getPrimitiveNull(oaObj, lowerName)) {
 				value = null;
 			}
 		}

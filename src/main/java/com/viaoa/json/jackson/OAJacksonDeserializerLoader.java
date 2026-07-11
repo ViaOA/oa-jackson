@@ -756,7 +756,7 @@ public class OAJacksonDeserializerLoader {
 				break;
 			}
 
-			OAPath pp = new OAPath(stackItem.oi.getForClass(), pjp.getPropertyPath());
+			OAPath pp = new OAPath(stackItem.oi.getForClass(), pjp.getPath());
 			OAPropertyInfo pi = pp.getEndPropertyInfo();
 
 			Object objx = convert(jn, pi);
@@ -831,7 +831,7 @@ public class OAJacksonDeserializerLoader {
 		Object[] values = new Object[] {};
 
 		for (final PojoProperty pjp : alPojoProperty) {
-			OAPath pp = new OAPath(stackItem.oi.getForClass(), pjp.getPropertyPath());
+			OAPath pp = new OAPath(stackItem.oi.getForClass(), pjp.getPath());
 			OAPropertyInfo pi = pp.getEndPropertyInfo();
 
 			JsonNode jn = stackItem.node.get(pjp.getName());
@@ -848,7 +848,7 @@ public class OAJacksonDeserializerLoader {
 				sql += " AND ";
 			}
 
-			sql += OAString.field(pjp.getPropertyPath(), ".", 2, 99) + " = ?";
+			sql += OAString.field(pjp.getPath(), ".", 2, 99) + " = ?";
 			values = OAArray.add(Object.class, values, val);
 		}
 
@@ -904,7 +904,7 @@ public class OAJacksonDeserializerLoader {
 		Object[] values = new Object[] {};
 
 		for (final PojoProperty pjp : alPojoProperty) {
-			OAPath pp = new OAPath(stackItem.oi.getForClass(), pjp.getPropertyPath());
+			OAPath pp = new OAPath(stackItem.oi.getForClass(), pjp.getPath());
 			OAPropertyInfo pi = pp.getEndPropertyInfo();
 
 			JsonNode jn = stackItem.node.get(pjp.getName());
@@ -921,7 +921,7 @@ public class OAJacksonDeserializerLoader {
 				sql += " AND ";
 			}
 
-			sql += OAString.field(pjp.getPropertyPath(), ".", 2, 99) + " = ?";
+			sql += OAString.field(pjp.getPath(), ".", 2, 99) + " = ?";
 			values = OAArray.add(Object.class, values, val);
 		}
 
@@ -1073,7 +1073,7 @@ public class OAJacksonDeserializerLoader {
 			if (stackItem.li.isMany()) {
 				hub = (Hub) stackItem.li.getValue(stackItem.parent.obj);
 			} else {
-				String pp = stackItem.li.getSelectFromPropertyPath();
+				String pp = stackItem.li.getSelectFromPath();
 				if (OAString.isNotEmpty(pp)) {
 					OAPath ppx = new OAPath(stackItem.parent.oi.getForClass(), pp);
 					hub = (Hub) ppx.getValue(stackItem.parent.obj);
@@ -1180,7 +1180,7 @@ public class OAJacksonDeserializerLoader {
 
 		if (stackItem.node.isObject()) {
 			for (PojoProperty pojoProp : alPojoProperyKeys) {
-				OAPath pp = new OAPath(stackItem.oi.getForClass(), pojoProp.getPropertyPath());
+				OAPath pp = new OAPath(stackItem.oi.getForClass(), pojoProp.getPath());
 				OAPropertyInfo pi = pp.getEndPropertyInfo();
 
 				JsonNode jn = stackItem.node.get(pojoProp.getName());
@@ -1197,7 +1197,7 @@ public class OAJacksonDeserializerLoader {
 					sql += " AND ";
 				}
 
-				sql += pojoProp.getPropertyPath() + " = ?";
+				sql += pojoProp.getPath() + " = ?";
 				args = OAArray.add(Object.class, args, val);
 			}
 
@@ -1205,7 +1205,7 @@ public class OAJacksonDeserializerLoader {
 			int pos = -1;
 			for (PojoProperty pojoProp : alPojoProperyKeys) {
 				pos++;
-				OAPath pp = new OAPath(stackItem.oi.getForClass(), pojoProp.getPropertyPath());
+				OAPath pp = new OAPath(stackItem.oi.getForClass(), pojoProp.getPath());
 				OAPropertyInfo pi = pp.getEndPropertyInfo();
 
 				Object val;
@@ -1227,7 +1227,7 @@ public class OAJacksonDeserializerLoader {
 					sql += " AND ";
 				}
 
-				sql += pojoProp.getPropertyPath() + " = ?";
+				sql += pojoProp.getPath() + " = ?";
 				args = OAArray.add(Object.class, args, val);
 			}
 		}
@@ -1252,7 +1252,7 @@ public class OAJacksonDeserializerLoader {
 					hub = (Hub) stackItem.li.getValue(stackItem.parent.obj);
 				}
 			} else {
-				String pp = stackItem.li.getSelectFromPropertyPath();
+				String pp = stackItem.li.getSelectFromPath();
 				if (OAString.isNotEmpty(pp)) {
 					OAPath ppx = new OAPath(stackItem.oi.getForClass(), pp);
 					hub = (Hub) ppx.getValue(stackItem.parent.obj);
@@ -1445,7 +1445,7 @@ public class OAJacksonDeserializerLoader {
 
 		EqualQueryForObject eq = new EqualQueryForObject();
 
-		eq.propPath = stackItem.li.getReverseLinkInfo().getEqualPropertyPath();
+		eq.propPath = stackItem.li.getReverseLinkInfo().getEqualPath();
 		if (OAString.isEmpty(eq.propPath)) {
 			eq.propPath = stackItem.li.getReverseLinkInfo().getName();
 		}
@@ -1460,7 +1460,7 @@ public class OAJacksonDeserializerLoader {
 				continue;
 			}
 
-			String s = li.getEqualPropertyPath();
+			String s = li.getEqualPath();
 			if (OAString.isEmpty(s)) {
 				continue;
 			}
@@ -1472,7 +1472,7 @@ public class OAJacksonDeserializerLoader {
 			}
 		}
 
-		String ppFrom = stackItem.li.getEqualPropertyPath();
+		String ppFrom = stackItem.li.getEqualPath();
 		if (OAString.isEmpty(ppFrom)) {
 			ppFrom = "";
 		}
@@ -1517,20 +1517,20 @@ public class OAJacksonDeserializerLoader {
 				continue;
 			}
 
-			String s = li.getEqualPropertyPath();
+			String s = li.getEqualPath();
 			if (OAString.isEmpty(s)) {
 				continue;
 			}
 
-			String sx = li.getReverseLinkInfo().getEqualPropertyPath();
+			String sx = li.getReverseLinkInfo().getEqualPath();
 			if (OAString.isEmpty(sx)) {
 				sx = li.getName();
 			} else {
 				sx = li.getLowerName() + "." + sx;
 			}
 
-			if (eq.propPath.length() > li.getEqualPropertyPath().length()) {
-				String extra = eq.propPath.substring(li.getEqualPropertyPath().length() + 1);
+			if (eq.propPath.length() > li.getEqualPath().length()) {
+				String extra = eq.propPath.substring(li.getEqualPath().length() + 1);
 				if (!OAString.isEmpty(sx)) {
 					sx += ".";
 				}
@@ -1590,10 +1590,10 @@ public class OAJacksonDeserializerLoader {
 		final OALinkInfo liToRef = stackItem.oi.getLinkInfo(plu.getPojoLinkOne().getPojoLink().getName());
 		final OALinkInfo liFromRef = liToRef.getReverseLinkInfo();
 
-		eq.propPath = liFromRef.getEqualPropertyPath();
+		eq.propPath = liFromRef.getEqualPath();
 
 		// get the root object used in equalPp
-		String sppToMatch = liToRef.getEqualPropertyPath();
+		String sppToMatch = liToRef.getEqualPath();
 		OAPath pp = new OAPath(stackItem.oi.getForClass(), sppToMatch);
 
 		// see if any of the props in ppx can be skipped - if they are in stack
@@ -1629,7 +1629,7 @@ public class OAJacksonDeserializerLoader {
 				continue;
 			}
 
-			String s = lix.getEqualPropertyPath();
+			String s = lix.getEqualPath();
 			if (OAString.isEmpty(s)) {
 				continue;
 			}
@@ -1661,7 +1661,7 @@ public class OAJacksonDeserializerLoader {
 			}
 
 			if (lix == stackItem.li.getReverseLinkInfo()) {
-				String pps = lix.getReverseLinkInfo().getEqualPropertyPath() + extraPp;
+				String pps = lix.getReverseLinkInfo().getEqualPath() + extraPp;
 				OAPath ppx = new OAPath(stackItem.parent.oi.getForClass(), pps);
 
 				// see if any of the props in ppx can be skipped - if they are in stack
@@ -1681,7 +1681,7 @@ public class OAJacksonDeserializerLoader {
 
 				eq.value = (OAObject) ppx.getValue(si.obj, pos);
 			} else {
-				String pps = lix.getEqualPropertyPath() + extraPp;
+				String pps = lix.getEqualPath() + extraPp;
 				OAPath ppx = new OAPath(stackItem.oi.getForClass(), pps);
 				eq.value = (OAObject) ppx.getValue(stackItem.obj);
 			}

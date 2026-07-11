@@ -132,7 +132,7 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 			if (oaj.getWriteAsPojo() && pi.getAutoAssign()) {
 				if (OAString.isNotEmpty(oi.getImportMatchPropertyNames())) {
 					boolean b = false;
-					for (String pp : oi.getImportMatchPropertyPaths()) {
+					for (String pp : oi.getImportMatchPaths()) {
 						OAPath ppx = new OAPath(oi.getForClass(), pp);
 						if (pp.indexOf('.') < 0 && pp.equalsIgnoreCase(pi.getName())) {
 							b = true;
@@ -444,7 +444,7 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 	protected void writePojoProperty(final OAJson oaj, final OAObjectInfo oi, final OAObject oaObj, final JsonGenerator gen,
 			final PojoProperty pjp) throws IOException {
 		String propertyName = pjp.getName();
-		String pp = pjp.getPropertyPath();
+		String pp = pjp.getPath();
 		OAPath ppx = new OAPath(oi.getForClass(), pp);
 		OAPropertyInfo pi = ppx.getEndPropertyInfo();
 

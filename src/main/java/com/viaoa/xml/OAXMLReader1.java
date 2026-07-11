@@ -711,7 +711,7 @@ public class OAXMLReader1 extends DefaultHandler {
 			}
 			final OAObjectKey key = new OAObjectKey(values, UUID.fromString(guid));
 			final String[] matchProps = getImportMatching() ? oi.getImportMatchPropertyNames() : null;
-			final String[] matchPropPaths = getImportMatching() ? oi.getImportMatchPropertyPaths() : null;
+			final String[] matchPropPaths = getImportMatching() ? oi.getImportMatchPaths() : null;
 			List<Object> al = new ArrayList<>();
 			if (matchProps != null && matchProps.length > 0) {
 				for (int i = 0; i < matchProps.length; i++) {

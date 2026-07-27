@@ -1026,7 +1026,7 @@ public class OAXMLReader1 extends DefaultHandler {
 				final OAThreadLocalService srvcOAThreadLocal = ((OAThreadService) OARuntime.thread()).getThreadLocalService();  
 
 				final OA oa =  OARuntime.oa(object);
-				if (oa.internal().objects().cs().isServer(object)) {
+				if (oa.sync().isServer()) {
 					bWas = srvcOAThreadLocal.getSendSyncMessages();
 					srvcOAThreadLocal.setSendSyncMessages(false);
 					// no, needs to have OAObjectEventDelegate.firePropertyChange() process property changes
@@ -1185,7 +1185,7 @@ public class OAXMLReader1 extends DefaultHandler {
 				final OAThreadLocalService srvcOAThreadLocal = ((OAThreadService) OARuntime.thread()).getThreadLocalService();  
 				srvcOAThreadLocal.setLoading(false);
 				final OA oa =  OARuntime.oa(object);
-				if (oa.internal().objects().cs().isServer(object)) {
+				if (oa.sync().isServer()) {
 					srvcOAThreadLocal.setSendSyncMessages(bWas);
 				}
 			}

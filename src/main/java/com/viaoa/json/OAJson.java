@@ -39,6 +39,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.MapType;
+import com.fasterxml.jackson.databind.util.TokenBuffer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.viaoa.cascade.OACascade;
 import com.viaoa.converter.OAConv;
@@ -177,6 +178,8 @@ public class OAJson {
 	 */
 	private List<ImportMatch> alImportMatch = new ArrayList<>();
 
+	public final static String OAJsonAttributeName = "oajson";
+	
 	/**
 	 * Returns the list of {@link ImportMatch} rules used to align incoming JSON
 	 * data with existing OAObjects. The list is lazily initialized if needed.
@@ -543,7 +546,7 @@ public class OAJson {
 		setStackItem(null);
 		this.cascade = null;
 		String json;
-		json = getObjectMapper().writerWithDefaultPrettyPrinter().withAttribute("oajson", this).writeValueAsString(obj);
+		json = getObjectMapper().writerWithDefaultPrettyPrinter().withAttribute(OAJsonAttributeName, this).writeValueAsString(obj);
 
 		return json;
 	}
@@ -570,7 +573,7 @@ public class OAJson {
 	public String format(String json) throws JsonProcessingException {
 		ObjectMapper mapper = getObjectMapper();
 		Object jsonObject = mapper.readValue(json, Object.class);
-		String prettyJson = mapper.writerWithDefaultPrettyPrinter().withAttribute("oajson", this).writeValueAsString(jsonObject);
+		String prettyJson = mapper.writerWithDefaultPrettyPrinter().withAttribute(OAJsonAttributeName, this).writeValueAsString(jsonObject);
 		return prettyJson;
 	}
 
@@ -587,7 +590,7 @@ public class OAJson {
 	public void write(Object obj, File file) throws JsonProcessingException, IOException {
 		setStackItem(null);
 		this.cascade = null;
-		getObjectMapper().writerWithDefaultPrettyPrinter().withAttribute("oajson", this).writeValue(file, obj);
+		getObjectMapper().writerWithDefaultPrettyPrinter().withAttribute(OAJsonAttributeName, this).writeValue(file, obj);
 	}
 
 	/**
@@ -604,7 +607,7 @@ public class OAJson {
 		setStackItem(null);
 		this.cascade = null;
 		String json;
-		getObjectMapper().writerWithDefaultPrettyPrinter().withAttribute("oajson", this).writeValue(stream, obj);
+		getObjectMapper().writerWithDefaultPrettyPrinter().withAttribute(OAJsonAttributeName, this).writeValue(stream, obj);
 	}
 
 	/**
@@ -710,8 +713,12 @@ public class OAJson {
 			return;
 		}
 		this.root = root;
-		readObject(is, root.getClass(), bIsLoading);
-		this.root = null;
+		try {
+			readObject(is, root.getClass(), bIsLoading);
+		}
+		finally {
+			this.root = null;
+		}
 	}
 
 	/**
@@ -751,7 +758,7 @@ public class OAJson {
 			}
 			JavaType jt = om.getTypeFactory().constructType(c);
 
-			obj = om.readerFor(jt).withAttribute("oajson", this).readValue(json);
+			obj = om.readerFor(jt).withAttribute(OAJsonAttributeName, this).readValue(json);
 			//qqqqq was: obj = (T) om.readValue(json, jt);
 
 		} finally {
@@ -762,7 +769,6 @@ public class OAJson {
 			}
 			readObjectClass = null;
 		}
-
 		return obj;
 	}
 
@@ -812,7 +818,7 @@ public class OAJson {
 				c = OAObject.class;
 			}
 			JavaType jt = om.getTypeFactory().constructType(c);
-			obj = om.readerFor(jt).withAttribute("oajson", this).readValue(stream);
+			obj = om.readerFor(jt).withAttribute(OAJsonAttributeName, this).readValue(stream);
 			//qqqqqqqq was: obj = (T) om.readValue(stream, jt);
 
 		} finally {
@@ -864,7 +870,7 @@ public class OAJson {
 				c = OAObject.class;
 			}
 			JavaType jt = om.getTypeFactory().constructType(c);
-			obj = om.readerFor(jt).withAttribute("oajson", this).readValue(file);
+			obj = om.readerFor(jt).withAttribute(OAJsonAttributeName, this).readValue(file);
 			//qqqqq was: obj = (T) om.readValue(file, jt);
 
 		} finally {
@@ -918,7 +924,7 @@ public class OAJson {
 
 			MapType mt = om.getTypeFactory().constructMapType(Map.class, clazzKey, c);
 
-			map = om.readerFor(mt).withAttribute("oajson", this).readValue(json);
+			map = om.readerFor(mt).withAttribute(OAJsonAttributeName, this).readValue(json);
 
 			//qqqqqqqqq was: map = (Map<K, V>) om.readValue(json, mt);
 		} finally {
@@ -967,7 +973,7 @@ public class OAJson {
 				c = OAObject.class;
 			}
 			CollectionType ct = om.getTypeFactory().constructCollectionType(List.class, c);
-			list = om.readerFor(ct).withAttribute("oajson", this).readValue(json);
+			list = om.readerFor(ct).withAttribute(OAJsonAttributeName, this).readValue(json);
 			//was qqqqqqq list = (List<T>) om.readValue(json, ct);
 
 		} finally {
@@ -1016,7 +1022,7 @@ public class OAJson {
 				c = OAObject.class;
 			}
 			CollectionType ct = om.getTypeFactory().constructCollectionType(List.class, c);
-			list = om.readerFor(ct).withAttribute("oajson", this).readValue(file);
+			list = om.readerFor(ct).withAttribute(OAJsonAttributeName, this).readValue(file);
 
 			//was qqqqqqqqq list = (List<T>) om.readValue(file, ct);
 		} finally {
@@ -1065,7 +1071,7 @@ public class OAJson {
 				c = OAObject.class;
 			}
 			CollectionType ct = om.getTypeFactory().constructCollectionType(List.class, c);
-			list = om.readerFor(ct).withAttribute("oajson", this).readValue(stream);
+			list = om.readerFor(ct).withAttribute(OAJsonAttributeName, this).readValue(stream);
 
 			//qqqqqqqqqq was: list = (List<T>) om.readValue(stream, ct);
 		} finally {
@@ -1118,7 +1124,7 @@ public class OAJson {
 	public void write(final Hub<? extends OAObject> hub, File file) throws JsonProcessingException, IOException {
 		setStackItem(null);
 		this.cascade = null;
-		getObjectMapper().writerWithDefaultPrettyPrinter().withAttribute("oajson", this).writeValue(file, hub);
+		getObjectMapper().writerWithDefaultPrettyPrinter().withAttribute(OAJsonAttributeName, this).writeValue(file, hub);
 	}
 
 	/**
@@ -1132,7 +1138,7 @@ public class OAJson {
 		setStackItem(null);
 		this.cascade = null;
 		final ObjectMapper objectMapper = getObjectMapper();
-		String json = objectMapper.writerWithDefaultPrettyPrinter().withAttribute("oajson", this).writeValueAsString(hub);
+		String json = objectMapper.writerWithDefaultPrettyPrinter().withAttribute(OAJsonAttributeName, this).writeValueAsString(hub);
 		return json;
 	}
 
@@ -1203,14 +1209,14 @@ public class OAJson {
 				for (int i = 0; i < x; i++) {
 					JsonNode node = nodeArray.get(i);
 					if (node.isObject()) {
-						T objx = om.readerFor(OAObject.class).withAttribute("oajson", this).readValue(node); // will use OAJacksondeserializer
+						T objx = om.readerFor(OAObject.class).withAttribute(OAJsonAttributeName, this).readValue(node); // will use OAJacksondeserializer
 						hub.add(objx);
 					} else if (node.isNumber()) {
 						// key
 						OAObjectKey ok = OAJson.convertNumberToObjectKey(getReadObjectClass(), node.asInt());
 
                 		final OA oa =  OARuntime.oa(getReadObjectClass());
-						OAObject objNew = (OAObject) oa.internal().objects().cache().get(getReadObjectClass(), ok);
+						OAObject objNew = (OAObject) oa.internal().objects().cache().getUsingKey(getReadObjectClass(), ok);
 						if (objNew != null) {
 							hub.add((T) objNew);
 						} else {
@@ -1231,7 +1237,7 @@ public class OAJson {
 							OAObjectKey ok = OAJson.convertJsonSinglePartIdToObjectKey(getReadObjectClass(), s);
 
 	                		final OA oa =  OARuntime.oa(getReadObjectClass());
-							OAObject objNew = (OAObject) oa.internal().objects().cache().get(getReadObjectClass(), ok);
+							OAObject objNew = (OAObject) oa.internal().objects().cache().getUsingKey(getReadObjectClass(), ok);
 							if (objNew != null) {
 								hub.add((T) objNew);
 							} else {
@@ -1409,8 +1415,14 @@ public class OAJson {
 				arrayNode.add(s);
 			}
 
-			JsonNode node = om.valueToTree(obj);
-
+			TokenBuffer tb = new TokenBuffer(om, false);
+			om.writer().withAttribute(OAJsonAttributeName, oaj).writeValue(tb, obj);
+			JsonParser p = tb.asParser();
+			JsonNode node = om.readTree(p);
+			
+			//was: could not set OAJsonAttributeName 
+			// JsonNode node = om.valueToTree(obj);
+			
 			arrayNode.add(node);
 		}
 
@@ -1480,8 +1492,7 @@ public class OAJson {
 	 * @return array of reconstructed argument values
 	 * @throws Exception if type conversion fails
 	 */
-	protected static Object[] convertJsonToMethodArguments(OAJson oaj, ArrayNode nodeArray, Method method, final int[] skipParams)
-			throws Exception {
+	protected static Object[] convertJsonToMethodArguments(final OAJson oaj, final ArrayNode nodeArray, final Method method, final int[] skipParams) throws Exception {
 		if (nodeArray == null || method == null) {
 			return null;
 		}
@@ -1529,10 +1540,11 @@ public class OAJson {
 				objx = oaj.readObject(node.toString(), paramClass, false);
 			} else {
 				ObjectMapper om = oaj.getObjectMapper();
-				objx = om.readValue(node.toString(), paramClass);
-
-				//qqqqqqqqqqqqqqqqqvv
-
+				
+				objx = om.readerFor(paramClass)
+					.withAttribute(OAJsonAttributeName, oaj)
+			        .readValue(node.toString());
+				//was: objx = om.readValue(node.toString(), paramClass);
 			}
 			margs[i] = objx;
 			nodeArrayPos++;

@@ -573,13 +573,13 @@ public class OAXMLReader {
 			} else {
 				if (ids != null && ids.length > 0) {
 					final OAObjectKey key = new OAObjectKey(values, iguid);
-					objNew = oa.internal().objects().cache().get(toClass, key);
+					objNew = oa.internal().objects().cache().getUsingKey(toClass, key);
 				}
 			}
 
 			if (objNew == null) {
 				final OAThreadLocalService srvcOAThreadLocal = ((OAThreadService) OARuntime.thread()).getThreadLocalService();  
-				srvcOAThreadLocal.setLoading(true);
+				final boolean bWasLoading = srvcOAThreadLocal.setLoading(true);
 				try {
 					objNew = createNewObject(toClass);
 //qqqqqqqqqqqqqq 20260111
@@ -596,7 +596,7 @@ public class OAXMLReader {
 						}
 					}
 				} finally {
-					srvcOAThreadLocal.setLoading(false);
+					srvcOAThreadLocal.setLoading(bWasLoading);
 				}
 //qqqqqqqqqqqqqq 20260111
 				oa.internal().objects().initialize().initializeAfterLoading(objNew);
@@ -611,9 +611,10 @@ public class OAXMLReader {
 		}
 
 		final boolean bLoadingNew = objNew.getNew() && !bIsPreloading;
+		boolean bWasLoading = false;
 		if (bLoadingNew) {
 			final OAThreadLocalService srvcOAThreadLocal = ((OAThreadService) OARuntime.thread()).getThreadLocalService();  
-			srvcOAThreadLocal.setLoading(true);
+			bWasLoading = srvcOAThreadLocal.setLoading(true);
 		}
 
 		if (!bIsPreloading) {
@@ -694,14 +695,15 @@ public class OAXMLReader {
 
 				for (HashMap hmx : (ArrayList<HashMap>) v) {
 					Object objx = null;
+					boolean bWasLoading2 = false;
 					try {
 						if (bLoadingNew) {
-							srvcOAThreadLocal.setLoading(false);
+							bWasLoading2 = srvcOAThreadLocal.setLoading(false);
 						}
 						objx = _processChildren(hmx, li == null ? OAObject.class : li.getToClass(), bIsPreloading, level + 1);
 					} finally {
 						if (bLoadingNew) {
-							srvcOAThreadLocal.setLoading(true);
+							srvcOAThreadLocal.setLoading(bWasLoading2);
 						}
 					}
 
@@ -729,9 +731,10 @@ public class OAXMLReader {
 				}
 			}
 		}
+//qqqqqqqq todo: put in 'finally' block		
 		if (bLoadingNew) {
 			final OAThreadLocalService srvcOAThreadLocal = ((OAThreadService) OARuntime.thread()).getThreadLocalService();  
-			srvcOAThreadLocal.setLoading(false);
+			srvcOAThreadLocal.setLoading(bWasLoading);
 		}
 		if (!bIsPreloading) {
 			objNew = getRealObject(objNew);
@@ -819,7 +822,7 @@ public class OAXMLReader {
 							}
 							final OA oa =  OARuntime.oa(object.getClass());
 					    	
-							OAObject obj = oa.internal().objects().cache().getObject(object.getClass(), oa.internal().objects().key().getKey(object));
+							OAObject obj = oa.internal().objects().cache().getUsingKey(object.getClass(), oa.internal().objects().key().getKey(object));
 							if (obj != null) {
 								object = obj;
 							}

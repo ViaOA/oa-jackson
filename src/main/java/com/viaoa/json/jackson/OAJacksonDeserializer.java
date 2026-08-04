@@ -64,12 +64,12 @@ public class OAJacksonDeserializer extends JsonDeserializer<OAObject> {
 	 * @throws JacksonException  if Jackson encounters a parsing error
 	 */
 	@Override
-	public OAObject deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JacksonException {
+	public OAObject deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException, JacksonException {
 		final OAThreadLocalService srvcOAThreadLocal = ((OAThreadService) OARuntime.thread()).getThreadLocalService();  
 
-		final OAJson oaj = (OAJson) ctxt.getAttribute(OAJson.class.getName());
+		final OAJson oaj = (OAJson) ctxt.getAttribute(OAJson.OAJsonAttributeName);
 		if (oaj == null) {
-		    throw new IllegalStateException("OAJson context missing for Jackson deserialization");
+		    throw new IllegalStateException("OAJson 'oajson' not set in Jackson attributes");
 		}		
 		
 		final Class clazz = oaj.getReadObjectClass();

@@ -679,7 +679,7 @@ public class OAJacksonDeserializerLoader {
 				obj = null;
 			} else {
 				final OA oa = OARuntime.oa(li.getToClass());
-				obj = (OAObject) oa.internal().objects().cache().get(li.getToClass(), ok);
+				obj = (OAObject) oa.internal().objects().cache().getUsingKey(li.getToClass(), ok);
 				if (obj == null) {
 					OADataSource ds = OARuntime.datasource().get(li.getToClass());
 					if (ds != null) obj = (OAObject) ds.getObject(li.getToClass(), ok);
@@ -791,7 +791,7 @@ public class OAJacksonDeserializerLoader {
 		OAObject obj = null;
 		if (ok != null) {
 			final OA oa =  OARuntime.oa(li.getToClass());
-			obj = (OAObject) oa.internal().objects().cache().get(li.getToClass(), ok);
+			obj = (OAObject) oa.internal().objects().cache().getUsingKey(li.getToClass(), ok);
 			if (obj == null) {
 				OADataSource ds = OARuntime.datasource().get(li.getToClass());
 				if (ds != null) {

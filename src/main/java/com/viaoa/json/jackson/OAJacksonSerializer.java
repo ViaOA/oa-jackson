@@ -63,16 +63,16 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 	 *
 	 * @param value        the OAObject to serialize
 	 * @param gen          JSON generator for writing output
-	 * @param serializers  serializer provider
+	 * @param serializerProvider  serializer provider
 	 * @throws IOException if writing fails
 	 */
 	@Override
-	public void serialize(final OAObject value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
+	public void serialize(final OAObject value, final JsonGenerator gen, final SerializerProvider serializerProvider) throws IOException {
 		final OAThreadLocalService srvcOAThreadLocal = ((OAThreadService) OARuntime.thread()).getThreadLocalService();  
 
-		OAJson oaj = (OAJson) serializers.getAttribute("oajson");
+		OAJson oaj = (OAJson) serializerProvider.getAttribute(OAJson.OAJsonAttributeName);
 	    if (oaj == null) {
-	        throw new IllegalStateException("OAJson serializer context missing");
+	        throw new IllegalStateException("OAJson 'oajson' not set in Jackson attributes");
 	    }		
 		
 		final OAObject oaObj = (OAObject) value;
@@ -93,7 +93,7 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 
 		}
 		try {
-			_serialize(oaj, oaObj, oi, value, gen, serializers);
+			_serialize(oaj, oaObj, oi, value, gen, serializerProvider);
 		} finally {
 			if (b) {
 				oaj.setStackItem(null);
@@ -113,11 +113,11 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 	 * @param oi          OAObject metadata
 	 * @param value       the root object value
 	 * @param gen         JSON output generator
-	 * @param serializers provider for additional serializers
+	 * @param serializerProvider provider for additional serializers
 	 * @throws IOException if writing fails
 	 */
 	protected void _serialize(final OAJson oaj, final OAObject oaObj, final OAObjectInfo oi, final OAObject value, final JsonGenerator gen,
-			final SerializerProvider serializers) throws IOException {
+			final SerializerProvider serializerProvider) throws IOException {
 
 		//qqqqqq if writeAsPojo, then this needs to us OAObjectInfo.pojo to determine Id properties
 		//qqq  if more than one, use compoundKey as string with '-'
@@ -235,7 +235,8 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 					} else {
 						if (oaj != null && !oaj.getCascade().wasCascaded(objx, true)) {
 							bSerialized = true;
-							gen.writeObjectField(li.getLowerName(), objx);
+							serializerProvider.defaultSerializeField(li.getLowerName(), objx, gen);
+							//was:  gen.writeObjectField(li.getLowerName(), objx);
 						} else {
 							bSerialized = false;
 						}
@@ -318,7 +319,8 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 						// note:  deserializer needs to check array values for object, string, number to "know" how to get it
 
 						if (oaj != null && !oaj.getCascade().wasCascaded(objx, true)) {
-							gen.writeObject(objx);
+							serializerProvider.defaultSerializeValue(objx, gen);							
+							//was: gen.writeObject(objx);
 						} else {
 
 							OAObjectKey key = objx.getObjectKey();

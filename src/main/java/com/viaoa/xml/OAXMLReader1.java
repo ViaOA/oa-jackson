@@ -770,7 +770,7 @@ public class OAXMLReader1 extends DefaultHandler {
 			} else {
 				if (ids != null && ids.length > 0) {
 					// final OAGraph og =  OARuntime.graph(c);
-					object = (OAObject) oa.internal().objects().cache().get(c, key);
+					object = (OAObject) oa.internal().objects().cache().getUsingKey(c, key);
 				}
 			}
 			if (object == null && guid != null) {
@@ -826,8 +826,8 @@ public class OAXMLReader1 extends DefaultHandler {
 
 				if (object == null) {
 					final OAThreadLocalService srvcOAThreadLocal = ((OAThreadService) OARuntime.thread()).getThreadLocalService();  
+					final boolean bWasLoading = srvcOAThreadLocal.setLoading(true);;
 					try {
-						srvcOAThreadLocal.setLoading(true);
 						object = createNewObject(c);
 						// set property ids
 						if (matchProps == null || matchProps.length == 0) {
@@ -847,7 +847,7 @@ public class OAXMLReader1 extends DefaultHandler {
 					} catch (Exception e) {
 						throw new SAXException("cant create object for class " + c.getName() + " Error:" + e, e);
 					} finally {
-						srvcOAThreadLocal.setLoading(false);
+						srvcOAThreadLocal.setLoading(bWasLoading);
 					}
 				} else {
 				}
@@ -1019,12 +1019,14 @@ public class OAXMLReader1 extends DefaultHandler {
 		}
 		boolean bResult = true;
 		boolean bLoadingObject = false;
+		boolean bWasLoading = false;
 		boolean bWas = false;
 		try {
 			if (object.getNew()) {
 				bLoadingObject = true;
 				final OAThreadLocalService srvcOAThreadLocal = ((OAThreadService) OARuntime.thread()).getThreadLocalService();  
 
+				bWasLoading = srvcOAThreadLocal.setLoading(false);
 				final OA oa =  OARuntime.oa(object);
 				if (oa.sync().isServer()) {
 					bWas = srvcOAThreadLocal.getSendSyncMessages();
@@ -1159,7 +1161,7 @@ public class OAXMLReader1 extends DefaultHandler {
 					// try to find "real" object
 					Class cx = oa.internal().objects().info().getPropertyClass(c, (String) k);
 					final OA oa2 = OARuntime.oa(cx);
-					v = oa2.internal().objects().cache().get(cx, (OAObjectKey) v);
+					v = oa2.internal().objects().cache().getUsingKey(cx, (OAObjectKey) v);
 					if (v == null) {
 						bResult = false;
 					} else {
@@ -1179,14 +1181,14 @@ public class OAXMLReader1 extends DefaultHandler {
 			}
 		} finally {
 			if (bLoadingObject) {
-				if (bResult) {
-					object.afterLoad();
-				}
 				final OAThreadLocalService srvcOAThreadLocal = ((OAThreadService) OARuntime.thread()).getThreadLocalService();  
-				srvcOAThreadLocal.setLoading(false);
+				srvcOAThreadLocal.setLoading(bWasLoading);
 				final OA oa =  OARuntime.oa(object);
 				if (oa.sync().isServer()) {
 					srvcOAThreadLocal.setSendSyncMessages(bWas);
+				}
+				if (bResult) {
+					object.afterLoad();
 				}
 			}
 		}
@@ -1314,7 +1316,7 @@ public class OAXMLReader1 extends DefaultHandler {
 	 */
 	protected Object getRealObject(OAObject object) {
 		final OA oa =  OARuntime.oa(object.getClass());
-		Object obj = oa.internal().objects().cache().getObject(object.getClass(), oa.internal().objects().key().getKey(object));
+		Object obj = oa.internal().objects().cache().getUsingKey(object.getClass(), oa.internal().objects().key().getKey(object));
 		if (obj != null) {
 			return obj;
 		}

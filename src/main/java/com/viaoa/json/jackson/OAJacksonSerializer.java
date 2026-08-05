@@ -411,7 +411,7 @@ public class OAJacksonSerializer extends JsonSerializer<OAObject> {
 				continue;
 			}
 			PojoLinkOne plox = plor.getPojoLinkOne();
-			writePojoLinkOne(oaj, oi, oaObj, gen, plo);
+			writePojoLinkOne(oaj, oi, oaObj, gen, plox);
 		}
 
 		// link with unique property

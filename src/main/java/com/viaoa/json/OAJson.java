@@ -681,8 +681,12 @@ public class OAJson {
 			return;
 		}
 		this.root = root;
-		readObject(json, root.getClass(), bIsLoading);
-		this.root = null;
+		try {
+			readObject(json, root.getClass(), bIsLoading);
+		}
+		finally { 
+			this.root = null;
+		}
 	}
 
 	/**
